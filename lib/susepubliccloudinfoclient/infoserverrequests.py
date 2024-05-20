@@ -275,9 +275,7 @@ def __reformat(item_or_items, info_type, result_format):
             sort_keys=True,
             indent=2,
             separators=(',', ': '))
-    # default to XML output (until we have a plain formatter)
-    else:
-        # elif result_format == 'xml':
+    elif result_format == 'xml':
         root = etree.Element(info_type)
         if isinstance(item_or_items, list):
             items = item_or_items
@@ -318,7 +316,7 @@ def __process(url, info_type, command_arg_filter, result_format):
 def get_provider_data(
         framework,
         type,
-        result_format='plain',
+        result_format='json',
         region='all',
         command_arg_filter=None):
     """Return the requested providers information"""
@@ -337,7 +335,7 @@ def get_provider_data(
 def get_image_states_data(
         framework,
         type,
-        result_format='plain',
+        result_format='json',
         region='all',
         command_arg_filter=None):
     """Return the requested image states information"""
@@ -356,7 +354,7 @@ def get_image_states_data(
 def get_server_types_data(
         framework,
         type,
-        result_format='plain',
+        result_format='json',
         region='all',
         command_arg_filter=None):
     """Return the requested server types information"""
@@ -375,7 +373,7 @@ def get_server_types_data(
 def get_regions_data(
         framework,
         type,
-        result_format='plain',
+        result_format='json',
         region='all',
         command_arg_filter=None):
     """Return the requested regions information"""
@@ -394,7 +392,7 @@ def get_regions_data(
 def get_image_data(
         framework,
         image_state,
-        result_format='plain',
+        result_format='json',
         region='all',
         command_arg_filter=None):
     """Return the requested image information"""
@@ -413,7 +411,7 @@ def get_image_data(
 def get_server_data(
         framework,
         server_type,
-        result_format='plain',
+        result_format='json',
         region='all',
         command_arg_filter=None):
     """Return the requested server information"""
@@ -433,7 +431,7 @@ def get_data_version(
         framework,
         server_type,
         category,
-        result_format='plain',
+        result_format='json',
         region='all'):
     """Return the requested server information"""
     url = __form_url(
