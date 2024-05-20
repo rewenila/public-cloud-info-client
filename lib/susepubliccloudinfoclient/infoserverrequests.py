@@ -432,7 +432,7 @@ def get_data_version(
         category,
         result_format='json',
         region='all'):
-    """Return the requested server information"""
+    """Return the requested data version for image or server"""
     url = __form_url(
         framework,
         'dataversion',
