@@ -24,7 +24,6 @@ import requests
 import sys
 import urllib
 from lxml import etree
-import collections
 
 
 def __apply_filters(superset, filters):
