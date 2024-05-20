@@ -267,6 +267,7 @@ def __parse_command_arg_filter(command_arg_filter=None):
 def __parse_server_response_data(server_response_data, info_type):
     return json.loads(server_response_data)[info_type]
 
+
 def __reformat(item_or_items, info_type, result_format):
     if result_format == 'json':
         return json.dumps(
