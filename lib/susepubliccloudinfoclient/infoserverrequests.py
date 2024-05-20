@@ -24,6 +24,7 @@ import requests
 import sys
 import urllib
 from lxml import etree
+import collections
 
 
 def __apply_filters(superset, filters):
@@ -146,11 +147,13 @@ def __form_url(
         region='all',
         image_state=None,
         server_type=None,
-        apply_filters=None):
+        apply_filters=None,
+        category=None):
     """Form the URL for the request"""
     url_components = []
     url_components.append(__get_base_url())
     url_components.append(__get_api_version())
+    query_params = {}
     if framework:
         url_components.append(framework)
     if region == 'all':
@@ -163,12 +166,16 @@ def __form_url(
         url_components.append('servers/types')
     else:
         url_components.append(info_type)
+    if category:
+        query_params['category'] = category
     doc_type = image_state or server_type
     if doc_type:
         url_components.append(doc_type)
     url_components[-1] = url_components[-1] + '.json'
-    url = '/'
-    return url.join(url_components)
+    url = '/'.join(url_components)
+    if query_params:
+        url += '?' + urllib.parse.urlencode(query_params)
+    return url
 
 
 def __get_api_version():
@@ -260,11 +267,10 @@ def __parse_command_arg_filter(command_arg_filter=None):
 def __parse_server_response_data(server_response_data, info_type):
     return json.loads(server_response_data)[info_type]
 
-
-def __reformat(items, info_type, result_format):
+def __reformat(item_or_items, info_type, result_format):
     if result_format == 'json':
         return json.dumps(
-            {info_type: items},
+            {info_type: item_or_items},
             sort_keys=True,
             indent=2,
             separators=(',', ': '))
@@ -272,8 +278,13 @@ def __reformat(items, info_type, result_format):
     else:
         # elif result_format == 'xml':
         root = etree.Element(info_type)
-        for item in items:
-            etree.SubElement(root, __inflect(info_type), item)
+        if isinstance(item_or_items, list):
+            items = item_or_items
+            for item in items:
+                etree.SubElement(root, __inflect(info_type), item)
+        else:
+            item = item_or_items
+            root.text = item
         return etree.tostring(
             root,
             xml_declaration=True,
@@ -415,3 +426,21 @@ def get_server_data(
         apply_filters=command_arg_filter
     )
     return __process(url, info_type, command_arg_filter, result_format)
+
+
+def get_data_version(
+        framework,
+        server_type,
+        category,
+        result_format='plain',
+        region='all'):
+    """Return the requested server information"""
+    url = __form_url(
+        framework,
+        'dataversion',
+        result_format,
+        region,
+        server_type=server_type,
+        category=category
+    )
+    return __process(url, 'version', None, result_format)
